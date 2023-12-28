@@ -16,16 +16,26 @@ set "folderPath=%baseFolder%diary"
 if NOT exist "%folderPath%" (
 	echo Create diary folder...
 	mkdir "%folderPath%"
-	REM setlocal 
 	set "password="
 	set /p "password=Enter password :"
-	echo !password! > "%folderPath%\.private"
+	echo !password!>"%folderPath%\.private"
 	echo Hide directory...
 	attrib +h "%folderPath%"
-	REM endlocal
 	goto endinitialsetup
-)	
+) else (
+	set /p password=<"%folderPath%\.private"
+	:validatepassword
+	set "attempt="
+	set /p "attempt=Enter password : "
+	if "!password!"=="!attempt!" (
+		goto accessgranted
+	) else (
+		echo This is not the password
+		goto validatepassword
+	)
+)
 
+:accessgranted
 REM Get the current date in the format YYYYMMDD
 for /f "tokens=1-3 delims=/ " %%a in ('date /t') do set "dateStamp=%%c%%b%%a"
 
