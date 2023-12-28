@@ -45,12 +45,21 @@ set "fileName=%dateStamp%.txt"
 REM Combine the folder path and file name to get the full path
 set "fullPath=%folderPath%\%fileName%"
 
-REM Write file header
-printf "Record for  %dateStamp% :\n\n" > %fullPath%
+if exist "%fullPath%" (
+	goto writefile
+) else (
+	REM Write file header
+	echo "Record for  %dateStamp% :" > %fullPath%
+	goto writefile
+)
 
-REM Start vim with the specified folder and new file
-vim "%fullPath%"
-
+:writefile
+where /q vim 
+if ERRORLEVEL 1 (
+	notepad "%fullPath%"
+) else (
+	vim "%fullPath%"
+)
 endlocal
 goto end
 
