@@ -1,7 +1,7 @@
 @echo off
-setlocal
+setlocal enabledelayedexpansion
 
-set "basefolder=C:\code\tasks"
+set "baseFolder=%~dp0"
 
 if exist "%baseFolder%" (
 	cd "%baseFolder%"
@@ -10,12 +10,21 @@ if exist "%baseFolder%" (
 	goto abortmessage
 )
 
-if NOT exist "%baseFolder%\diary" (
-	echo Create diary files folder
-	mkdir "%baseFolder%\diary"
-)	
 REM Set the folder path where you want to create the new file
-set "folderPath=%baseFolder%\diary"
+set "folderPath=%baseFolder%diary"
+
+if NOT exist "%folderPath%" (
+	echo Create diary folder...
+	mkdir "%folderPath%"
+	REM setlocal 
+	set "password="
+	set /p "password=Enter password :"
+	echo !password! > "%folderPath%\.private"
+	echo Hide directory...
+	attrib +h "%folderPath%"
+	REM endlocal
+	goto endinitialsetup
+)	
 
 REM Get the current date in the format YYYYMMDD
 for /f "tokens=1-3 delims=/ " %%a in ('date /t') do set "dateStamp=%%c%%b%%a"
@@ -33,9 +42,20 @@ REM Start vim with the specified folder and new file
 vim "%fullPath%"
 
 endlocal
-
-exit
+goto end
 
 :abortmessage
+endlocal
 echo The process has failed
+goto end
+
+:endinitialsetup
+endlocal
+echo The diary is ready to use
+echo Run diary.bat again to write the first note
+goto end
+
+:end
+pause 
+exit
 

@@ -1,5 +1,6 @@
-# tasks
-bat files for automatisation
+# Tasks
+
+Automatisation scripts for miscellanous tasks.
 
 **Requirements :**
 - git bash
