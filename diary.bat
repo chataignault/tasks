@@ -35,7 +35,7 @@ if NOT exist "%folderPath%" (
 	)
 )
 
-:accessgranted
+:accessgranted       
 REM Get the current date in the format YYYYMMDD
 for /f "tokens=1-3 delims=/ " %%a in ('date /t') do set "dateStamp=%%c%%b%%a"
 
@@ -49,16 +49,16 @@ if exist "%fullPath%" (
 	goto writefile
 ) else (
 	REM Write file header
-	echo "Record for  %dateStamp% :" > %fullPath%
+	echo Record for  %dateStamp% : > %fullPath%
 	goto writefile
 )
 
 :writefile
-where /q vim 
+where /q bash 
 if ERRORLEVEL 1 (
 	notepad "%fullPath%"
 ) else (
-	vim "%fullPath%"
+	bash --login -i -c "vim '%fullPath%'"
 )
 endlocal
 goto end
