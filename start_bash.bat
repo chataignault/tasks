@@ -1,3 +1,3 @@
 echo OFF
-bash.exe
+start git-bash
 exit
