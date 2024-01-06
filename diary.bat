@@ -75,6 +75,7 @@ echo Run diary.bat again to write the first note
 goto end
 
 :end
-pause 
+REM debug only
+REM pause 
 exit
 
