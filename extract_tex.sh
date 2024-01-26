@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copy lecture notes from Imperial folder immediately to repository
+# Copy lecture notes source files from Imperial folder immediately to repository
 
 sourcePath="$cimp"
 destinationPath="/c/code/latex/cimp"

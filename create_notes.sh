@@ -33,6 +33,11 @@ else
 
 \maketitle
 
+
+\begin{thebibliiography}{}
+
+\end{thebibliography}
+
 \end{document}" > "$notes_file"
 
 	echo "notes initialised in : $path"
