@@ -77,5 +77,5 @@ goto end
 :end
 REM debug only
 REM pause 
-exit
+REM exit
 

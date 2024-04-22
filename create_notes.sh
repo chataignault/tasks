@@ -34,7 +34,7 @@ else
 \maketitle
 
 
-\begin{thebibliiography}{}
+\begin{thebibliography}{}
 
 \end{thebibliography}
 
