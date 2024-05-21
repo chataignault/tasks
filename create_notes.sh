@@ -2,8 +2,8 @@
 
 # Check if a path is provided as an argument
 if [ $# -eq 0 ]; then
-	echo "Usage: $0 <path>"
-	exit 1
+	echo "Need specify root path..."
+	return	
 fi
 
 # Get the path from the command line argument
@@ -13,7 +13,7 @@ notes_folder="$path/notes"
 
 if [ -d "$notes_folder" ]; then
 	echo "notes folder already exists !"
-	exit 0
+	return
 else
 	mkdir -p "$notes_folder"
 
