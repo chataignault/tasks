@@ -1,14 +1,14 @@
-use std::fs;
-use std::io;
-use std::fs::{metadata};
 use clap::Parser;
+use std::fs;
+use std::fs::metadata;
+use std::io;
 use std::path::Path;
 
 #[derive(Parser)]
 struct Cli {
     input_folder: std::path::PathBuf,
     output_folder: std::path::PathBuf,
-    extension: String
+    extension: String,
 }
 
 fn main() -> io::Result<()> {
@@ -26,7 +26,12 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-fn process_directory(path: &Path, input_folder: &Path, output_folder: &Path, extension: &str) -> io::Result<()> {
+fn process_directory(
+    path: &Path,
+    input_folder: &Path,
+    output_folder: &Path,
+    extension: &str,
+) -> io::Result<()> {
     for entry in fs::read_dir(path)? {
         let entry = entry?;
         let path = entry.path();
