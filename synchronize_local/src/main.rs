@@ -36,15 +36,12 @@ fn process_directory(
         let entry = entry?;
         let path = entry.path();
 
-        // println!("{}", path.display());
-
         if path.is_dir() {
             process_directory(&path, input_folder, output_folder, extension)?;
         } else if let Some(ext) = path.extension() {
             if ext == extension {
                 println!("{}\n{}", input_folder.display(), path.display());
                 let relative_path = path.strip_prefix(input_folder).unwrap();
-                // println!("Relative path : {}", relative_path.display());
                 let output_file_path = Path::new(output_folder).join(relative_path);
 
                 if file_is_newer(&path, &output_file_path)? {
@@ -74,6 +71,5 @@ fn copy_file(input_file: &Path, output_file: &Path) -> io::Result<()> {
         fs::create_dir_all(parent)?;
     }
     fs::copy(input_file, output_file)?;
-    // println!("Copied: {} -> {}", input_file.display(), output_file.display());
     Ok(())
 }
