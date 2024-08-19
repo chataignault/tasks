@@ -40,11 +40,11 @@ fn process_directory(
             process_directory(&path, input_folder, output_folder, extension)?;
         } else if let Some(ext) = path.extension() {
             if ext == extension {
-                println!("{}\n{}", input_folder.display(), path.display());
                 let relative_path = path.strip_prefix(input_folder).unwrap();
                 let output_file_path = Path::new(output_folder).join(relative_path);
 
                 if file_is_newer(&path, &output_file_path)? {
+                    println!("Update : {} into {}", &path.display(), &output_file_path.display());
                     copy_file(&path, &output_file_path)?;
                 }
             }
