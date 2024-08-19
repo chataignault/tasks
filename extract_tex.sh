@@ -16,7 +16,7 @@ if [ ! -d "$destinationPath" ]; then
     mkdir -p "$destinationPath"
 fi
 
-find "$sourcePath" -type f -name '*.tex' | while IFS= read -r sourceFile; do
+find "$sourcePath" -type f -name '*.tex' -o -wholename '**/notes/*.png' | while IFS= read -r sourceFile; do
 	relativePath=$(realpath --relative-to "$sourcePath" "$sourceFile") 
 	destinationFile="$destinationPath/$relativePath"
 
@@ -25,7 +25,7 @@ find "$sourcePath" -type f -name '*.tex' | while IFS= read -r sourceFile; do
 	mkdir -p "$destinationFolder"
 
 	cp "$sourceFile" "$destinationFile"
-	echo "Copied $sourceFile to $destinationFile"
+	echo ">>> Copied $sourceFile to $destinationFile"
 done
 
 echo "Copy operation completed."
