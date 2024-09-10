@@ -16,7 +16,13 @@ if [ ! -d "$destinationPath" ]; then
     mkdir -p "$destinationPath"
 fi
 
-find "$sourcePath" -type f -name '*.tex' -o -wholename '**/notes/*.png' | while IFS= read -r sourceFile; do
+find "$sourcePath" -type f \( \
+	-name '*.tex' \
+	-o -path '*/notes/*.png' \
+	-o -path '*/notes/*.jpg' \
+	-o -path '*/img/*.png' \
+	-o -path '*/img/*.jpg' \
+	\) | while IFS= read -r sourceFile; do
 	relativePath=$(realpath --relative-to "$sourcePath" "$sourceFile") 
 	destinationFile="$destinationPath/$relativePath"
 
