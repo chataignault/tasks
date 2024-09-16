@@ -21,13 +21,20 @@ else
 	echo "\documentclass[12pt]{article}
 \title{ - Lecture notes}
 \usepackage[english]{babel}
-\date{}
+\date{\today}
 \usepackage[utf8]{inputenc}
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{geometry} \geometry{hmargin=2cm,vmargin=2cm}
 \usepackage{mathtools}
 \usepackage{url}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{property}[theorem]{Property}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{definition}[theorem]{Definition}
 
 \begin{document}
 
