@@ -1,11 +1,15 @@
 use std::collections::HashMap;
 use std::io::{self, Write};
+use std::fs;
+use serde::{Serialize, Deserialize};
 
+#[derive(Serialize, Deserialize)]
 struct Todo {
     description: String,
     completed: bool,
 }
 
+#[derive(Serialize, Deserialize)]
 struct TodoList {
     items: HashMap<usize, Todo>,
     next_id: usize,
@@ -26,11 +30,13 @@ impl TodoList {
         };
         self.items.insert(self.next_id, todo);
         self.next_id += 1;
+        self.save_to_file();
     }
 
     fn mark_complete(&mut self, id: usize) -> bool {
         if let Some(todo) = self.items.get_mut(&id) {
             todo.completed = true;
+            self.save_to_file();
             true
         } else {
             false
@@ -43,10 +49,22 @@ impl TodoList {
             println!("{} {}: {}", id, status, todo.description);
         }
     }
+
+    fn save_to_file(&self) {
+        let serialized = serde_json::to_string(self).unwrap();
+        fs::write("todo_list.json", serialized).expect("Unable to write file");
+    }
+
+    fn load_from_file() -> Self {
+        match fs::read_to_string("todo_list.json") {
+            Ok(contents) => serde_json::from_str(&contents).unwrap_or_else(|_| TodoList::new()),
+            Err(_) => TodoList::new(),
+        }
+    }
 }
 
 fn main() {
-    let mut todo_list = TodoList::new();
+    let mut todo_list = TodoList::load_from_file();
 
     loop {
         print!("Enter command (add/complete/list/quit): ");
