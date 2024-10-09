@@ -22,6 +22,9 @@ find "$sourcePath" -type f \( \
 	-o -path '*/notes/*.jpg' \
 	-o -path '*/img/*.png' \
 	-o -path '*/img/*.jpg' \
+	-o -path '*/Mastery*/*.tex' \
+	-o -path '*/Mastery*/*.png' \
+	-o -path '*/Mastery*/*.jpg' \
 	\) | while IFS= read -r sourceFile; do
 	relativePath=$(realpath --relative-to "$sourcePath" "$sourceFile") 
 	destinationFile="$destinationPath/$relativePath"
