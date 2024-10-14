@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::io::{self, Write};
 use std::fs;
+use std::path::Path;
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
@@ -53,6 +54,7 @@ impl TodoList {
     }
 
     fn display(&self) {
+        println!("{}: ", self.name);
         for (id, todo) in &self.items {
             let status = if todo.completed { "[x]" } else { "[ ]" };
             println!("{} {}: {}", id, status, todo.description);
@@ -73,61 +75,81 @@ impl TodoList {
 }
 
 
-// impl TodoListTopic {
-//     fn new() -> Self {
-//         TodoListTopic {
-//             items: HashMap::new(),
-//             current_topic: "",
-//         }
-//     }
+impl TodoListTopic {
+    fn new() -> Self {
+        TodoListTopic {
+            items: HashMap::new(),
+            current_topic: "".to_string(),
+        }
+    }
 
-//     fn add(&mut self, description: String) {
-//         let todo = Todo {
-//             description,
-//             completed: false,
-//         };
-//         self.items.get_mut(&self.current_topic).unwrap().items.insert(self.current_id, todo);
-//         self.save_to_file();
-//     }
+    fn add(&mut self, description: String) {
+        let todo = Todo {
+            description,
+            completed: false,
+        };
+        let next_id_topic : usize = self.items.get_mut(&self.current_topic).unwrap().next_id;
+        self.items.get_mut(&self.current_topic).unwrap().items.insert(next_id_topic, todo);
+        self.save_to_file();
+    }
 
-//     fn mark_complete(&mut self, id: usize) -> bool {
-//         if let Some(todo) = self.items.get_mut(self.current_topic).items.get_mut(&id) {
-//             todo.completed = true;
-//             self.save_to_file();
-//             true
-//         } else {
-//             false
-//         }
-//     }
+    fn mark_complete(&mut self, id: usize) -> bool {
+        if let Some(todo) = self.items.get_mut(&self.current_topic).unwrap().items.get_mut(&id) {
+            todo.completed = true;
+            self.save_to_file();     
+            true
+        } else {
+            false
+        }
+    }
 
-//     fn display(&self) {
-//         println!("{} :", self.current_topic);
-//         for (id, todo) in &self.get_mut(&self.current_topic).items {
-//             let status = if todo.completed { "[x]" } else { "[ ]" };
-//             println!("{} {}: {}", id, status, todo.description);
-//         }
-//     }
+    fn display(&mut self) {
+        self.items.get_mut(&self.current_topic).unwrap().display();
+    }
 
-//     fn save_to_file(&self) {
-//         self.items.get_mut(&self.current_topic).save_to_file();
-//         // let serialized = serde_json::to_string(self).unwrap();
-//         // fs::write("todo_list.json", serialized).expect("Unable to write file");
-//     }
+    fn list_topics(&mut self){
+        for topic in self.items.keys() {
+            println!("{}", topic)
+        }
+    }
 
-//     fn load_from_file() -> Self {
-//         // Read all of the topics : create folder to gather them
-//         match fs::read_to_string("todo_list.json") {
-//             Ok(contents) => serde_json::from_str(&contents).unwrap_or_else(|_| TodoList::new()),
-//             Err(_) => TodoList::new(),
-//         }
-//     }
-// }
+
+    fn save_to_file(&mut self) {
+        self.items.get_mut(&self.current_topic).unwrap().save_to_file();
+    }
+
+    fn load_from_file(topic: String) -> Self {
+        let folder : String = "todos".to_string();
+        let path = Path::new(&folder);
+        // List files in folder and get their prefix in front of '_'
+        let entries = match fs::read_dir(path) {
+            Ok(entries) => entries,
+            Err(_) => {
+                println!("Error reading directory");
+                return TodoListTopic::new(); 
+            }
+        };
+        // For each name in the list, read the content and add it to the items hasmap, where key is the prefix of the file
+        let mut todo_list_topic = TodoListTopic::new();
+        for entry in entries {
+            if let Ok(entry) = entry {
+                if let Some(file_name) = entry.file_name().to_str() {
+                    if let Some(topic) = file_name.split("_").next() {
+                        println!("Found topic : {}", topic);
+                        todo_list_topic.items.insert((*topic).to_string(), TodoList::load_from_file((*  topic).to_string()));
+                    }
+                }
+            }
+        }
+        return TodoListTopic::new()
+    }
+}
 
 
 fn main() {
     let name: String = "test".to_string();
     let mut todo_list = TodoList::load_from_file(name);
-    // let current_topic =  String::new();
+    let current_topic =  String::new();
 
     loop {
         print!("Enter command (add/complete/list/change/quit): ");
