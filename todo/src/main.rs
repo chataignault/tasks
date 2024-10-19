@@ -17,6 +17,7 @@ struct TodoList {
     next_id: usize,
 }
 
+
 #[derive(Serialize, Deserialize)]
 struct TodoListTopic {
     items: HashMap<String, TodoList>,
@@ -26,7 +27,7 @@ struct TodoListTopic {
 impl TodoList {
     fn new(name: String) -> Self {
         TodoList {
-            name: name,
+            name,
             items: HashMap::new(),
             next_id: 1,
         }
@@ -61,8 +62,10 @@ impl TodoList {
     }
 
     fn save_to_file(&self) {
+        let folder = "todos".to_string();
+        let path = Path::new(&folder);
         let serialized = serde_json::to_string(self).unwrap();
-        fs::write(format!("{}_todo_list.json", self.name), serialized)
+        fs::write(path.join(format!("{}_todo_list.json", self.name)), serialized)
             .expect("Unable to write file");
     }
 
@@ -93,16 +96,10 @@ impl TodoListTopic {
     }
 
     fn add(&mut self, description: String) {
-        let todo = Todo {
-            description,
-            completed: false,
-        };
-        let next_id_topic: usize = self.items.get_mut(&self.current_topic).unwrap().next_id;
         self.items
             .get_mut(&self.current_topic)
             .unwrap()
-            .items
-            .insert(next_id_topic, todo);
+            .add(description);
         self.save_to_file();
     }
 
@@ -226,14 +223,17 @@ fn main() {
                 println!("Current Topics:");
                 todo_list.list_topics();
                 println!("Choose existing or create a new one.");
-                let mut current_topic = String::new();
-                // io::stdin().read_line(&mut current_topic).unwrap().trim().to_string();
+                let mut new_topic = String::new();
                 io::stdin()
-                    .read_line(&mut current_topic)
+                    .read_line(&mut new_topic)
                     .expect("Failed to read line");
-                let current_topic = input.trim().to_string();
-                // let current_topic = input.trim().to_string();
-                todo_list.current_topic = current_topic;
+                current_topic = new_topic.trim().to_string();
+                todo_list.current_topic = current_topic.clone();
+
+                todo_list.items
+                    .entry(current_topic.clone())
+                    .and_modify(|list| *list = TodoList::load_from_file(current_topic.clone()))
+                    .or_insert(TodoList::load_from_file(current_topic.clone()));
             }
             // "clear" => {
             //     // if all tasks are marked completed, then delete the topic
