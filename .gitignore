@@ -7,3 +7,6 @@ target
 .exe
 .pdb
 */*.json
+todo/todos
+*.yaml
+
