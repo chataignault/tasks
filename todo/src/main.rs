@@ -90,7 +90,11 @@ impl TodoList {
 impl TodoListTopic {
     fn new(topic: String) -> Self {
         TodoListTopic {
-            items: HashMap::new(),
+            items: {
+                let mut map = HashMap::new();
+                map.insert(topic.clone(), TodoList::new(topic.clone()));
+                map
+            },
             current_topic: topic,
         }
     }
@@ -104,19 +108,7 @@ impl TodoListTopic {
     }
 
     fn mark_complete(&mut self, id: usize) -> bool {
-        if let Some(todo) = self
-            .items
-            .get_mut(&self.current_topic)
-            .unwrap()
-            .items
-            .get_mut(&id)
-        {
-            todo.completed = true;
-            self.save_to_file();
-            true
-        } else {
-            false
-        }
+        self.items.get_mut(&self.current_topic).unwrap().mark_complete(id)
     }
 
     fn display(&mut self) {
@@ -146,7 +138,7 @@ impl TodoListTopic {
 
     fn load_from_file(topic: String) -> Self {
         let folder: String = "todos".to_string();
-        let mut path = Path::new(&folder);
+        let path = Path::new(&folder);
         // List files in folder and get their prefix in front of '_'
         let entries = match fs::read_dir(path) {
             Ok(entries) => entries,
@@ -172,11 +164,32 @@ impl TodoListTopic {
         }
         return todo_list_topic;
     }
+
+    fn clear(&mut self) {
+        // if all tasks are marked completed, then delete the topic
+        // else remove the items if they are marked as completed
+        if self.items.get_mut(&self.current_topic).unwrap().items.values().all(|todo| todo.completed) {
+            self.items.remove(&self.current_topic);
+            // Delete the file for the removed topic
+            let file_path = format!("todos/{}_todo_list.json", self.current_topic);
+            if let Err(e) = fs::remove_file(file_path) {
+                println!("Error deleting file: {}", e);
+            }
+            if let Some(next_topic) = self.items.keys().next() {
+                self.current_topic = next_topic.to_string();
+            } else {
+                self.current_topic = "general".to_string();
+                self.items.insert(self.current_topic.clone(), TodoList::new(self.current_topic.clone()));
+            }
+        } else {
+            self.items.get_mut(&self.current_topic).unwrap().items.retain(|_, todo| !todo.completed);
+            self.items.get_mut(&self.current_topic).unwrap().save_to_file();
+        }
+    }
 }
 
 fn main() {
-    // let name: String = "test".to_string();
-    let mut current_topic = "test".to_string(); // String::new();
+    let mut current_topic = "general".to_string(); 
     let mut todo_list = TodoListTopic::load_from_file(current_topic.clone());
 
     loop {
@@ -235,12 +248,10 @@ fn main() {
                     .and_modify(|list| *list = TodoList::load_from_file(current_topic.clone()))
                     .or_insert(TodoList::load_from_file(current_topic.clone()));
             }
-            // "clear" => {
-            //     // if all tasks are marked completed, then delete the topic
-            //     // else remove the items if they are marked as completed
-            //     todo_lsit.clear_topic(current_topic)
-            //     println!("Topic {} cleared", current_topic)
-            // }
+            "clear" => {
+                println!("Clearing topic {}", todo_list.current_topic);
+                todo_list.clear();
+            }
             "quit" => {
                 println!("Goodbye!");
                 break;
