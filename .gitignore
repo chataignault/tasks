@@ -1,12 +1,14 @@
-*.txt
-*/*.txt
+bin
 bin/diary
 bin/logs
 target
 .idea
-.exe
-.pdb
-*/*.json
 todo/todos
+
+*.txt
+*/*.txt
+*.exe
+*.pdb
+*/*.json
 *.yaml
 
