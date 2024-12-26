@@ -3,6 +3,7 @@ use reqwest::header::{HeaderMap, HeaderValue, CONTENT_TYPE};
 use serde::Deserialize;
 use std::error::Error;
 use std::fs;
+use dirs;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -21,7 +22,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
 
     // Load credentials from YAML file
-    let credentials_content = fs::read_to_string("credentials.yaml")?;
+    let credentials_folder = dirs::home_dir().expect("Could not find home directory").join(".credentials");
+    let credentials_content = fs::read_to_string(credentials_folder.join("claude.yaml"))?;
     let credentials: Credentials = serde_yaml::from_str(&credentials_content)?;
 
     // Set up headers
