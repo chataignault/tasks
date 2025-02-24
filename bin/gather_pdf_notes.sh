@@ -20,17 +20,24 @@ copy_pdf_file() {
 		awk -F/ '{print $1}')
 	pdfFile=$(echo "$1" | awk -F. '{print $1}')".pdf"
 	fileName=$(basename $(dirname "$pdfFile"))
-	destinationFile="$3/${courseName}_${fileName}.pdf"
-	if [ -e "$pdfFile" ]; then
-		# tex file has been compiled 
-		cp "$pdfFile" "$destinationFile"
+	if [[ "$fileName" != *"Coursework"* && "$fileName" != *"assignement"* ]]; then
+		destinationFile="$3/${courseName}_${fileName}.pdf"
+		if [ -e "$pdfFile" ]; then
+			# tex file has been compiled 
+			cp "$pdfFile" "$destinationFile"
+		fi
 	fi
 
 }
 
 export -f copy_pdf_file
 
+shopt -s nocasematch
+shopt -s nocaseglob
+
 find "$sourcePath" -type f -name '*.tex' | \
 	xargs -P 10 -I {} bash -c 'copy_pdf_file "$@"' _ {} $sourcePath $destPath
 
+shopt -u nocasematch
+shopt -u nocaseglob
 
