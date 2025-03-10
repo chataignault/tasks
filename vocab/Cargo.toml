@@ -6,3 +6,5 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.5.31", features = ["derive"] }
 polars = "0.46.0"
+polars-core = "0.46.0"
+polars-io = "0.46.0"
