@@ -17,7 +17,6 @@ struct TodoList {
     next_id: usize,
 }
 
-
 #[derive(Serialize, Deserialize)]
 struct TodoListTopic {
     items: HashMap<String, TodoList>,
@@ -65,8 +64,11 @@ impl TodoList {
         let folder = "todos".to_string();
         let path = Path::new(&folder);
         let serialized = serde_json::to_string(self).unwrap();
-        fs::write(path.join(format!("{}_todo_list.json", self.name)), serialized)
-            .expect("Unable to write file");
+        fs::write(
+            path.join(format!("{}_todo_list.json", self.name)),
+            serialized,
+        )
+        .expect("Unable to write file");
     }
 
     fn load_from_file(name: String) -> Self {
@@ -108,7 +110,10 @@ impl TodoListTopic {
     }
 
     fn mark_complete(&mut self, id: usize) -> bool {
-        self.items.get_mut(&self.current_topic).unwrap().mark_complete(id)
+        self.items
+            .get_mut(&self.current_topic)
+            .unwrap()
+            .mark_complete(id)
     }
 
     fn display(&mut self) {
@@ -168,7 +173,14 @@ impl TodoListTopic {
     fn clear(&mut self) {
         // if all tasks are marked completed, then delete the topic
         // else remove the items if they are marked as completed
-        if self.items.get_mut(&self.current_topic).unwrap().items.values().all(|todo| todo.completed) {
+        if self
+            .items
+            .get_mut(&self.current_topic)
+            .unwrap()
+            .items
+            .values()
+            .all(|todo| todo.completed)
+        {
             self.items.remove(&self.current_topic);
             // Delete the file for the removed topic
             let file_path = format!("todos/{}_todo_list.json", self.current_topic);
@@ -179,17 +191,27 @@ impl TodoListTopic {
                 self.current_topic = next_topic.to_string();
             } else {
                 self.current_topic = "general".to_string();
-                self.items.insert(self.current_topic.clone(), TodoList::new(self.current_topic.clone()));
+                self.items.insert(
+                    self.current_topic.clone(),
+                    TodoList::new(self.current_topic.clone()),
+                );
             }
         } else {
-            self.items.get_mut(&self.current_topic).unwrap().items.retain(|_, todo| !todo.completed);
-            self.items.get_mut(&self.current_topic).unwrap().save_to_file();
+            self.items
+                .get_mut(&self.current_topic)
+                .unwrap()
+                .items
+                .retain(|_, todo| !todo.completed);
+            self.items
+                .get_mut(&self.current_topic)
+                .unwrap()
+                .save_to_file();
         }
     }
 }
 
 fn main() {
-    let mut current_topic = "general".to_string(); 
+    let mut current_topic = "general".to_string();
     let mut todo_list = TodoListTopic::load_from_file(current_topic.clone());
 
     loop {
@@ -243,7 +265,8 @@ fn main() {
                 current_topic = new_topic.trim().to_string();
                 todo_list.current_topic = current_topic.clone();
 
-                todo_list.items
+                todo_list
+                    .items
                     .entry(current_topic.clone())
                     .and_modify(|list| *list = TodoList::load_from_file(current_topic.clone()))
                     .or_insert(TodoList::load_from_file(current_topic.clone()));
@@ -253,7 +276,6 @@ fn main() {
                 todo_list.clear();
             }
             "quit" => {
-                println!("Goodbye!");
                 break;
             }
             _ => println!("Unknown command. Please try again."),
