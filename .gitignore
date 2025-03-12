@@ -11,4 +11,5 @@ todo/todos
 *.pdb
 */*.json
 *.yaml
+*.csv
 

@@ -1,13 +1,36 @@
 use polars::prelude::*;
-use polars_core::prelude::*;
+// use polars_core::prelude::*;
 use polars_io::csv::read::CsvReadOptions;
-use polars_io::csv::write::CsvWriterOptions;
-use polars_io::prelude::*;
+// use polars_io::csv::write::CsvWriterOptions;
+// use polars_io::prelude::*;
 use rand::rng;
 use rand::seq::SliceRandom;
 use std::fs::File;
 use std::io;
 use std::path::Path;
+
+fn load_data(file: &String) -> DataFrame {
+    let mut voc = DataFrame::new(vec![
+        Column::new("Word".into(), &Vec::<String>::new()),
+        Column::new("Description".into(), &Vec::<String>::new()),
+    ])
+    .unwrap();
+
+    if Path::new(&file.to_string()).exists() {
+        voc = open_csv(file).unwrap();
+        println!("Found current voc : len {}", voc.shape().0);
+        println!("{}", voc.head(Some(10)));
+    }
+    voc
+}
+
+fn open_csv(file: &String) -> Result<DataFrame, PolarsError> {
+    CsvReadOptions::default()
+        .with_has_header(true)
+        .try_into_reader_with_file_path(Some(file.clone().into()))
+        .unwrap()
+        .finish()
+}
 
 fn main() {
     // CLI user interface to :
@@ -16,22 +39,7 @@ fn main() {
     // save the dictionary when leaving in csv file
     let file: String = String::from("vocab.csv");
 
-    let mut voc = DataFrame::new(vec![
-        Column::new("Word".into(), &Vec::<String>::new()),
-        Column::new("Description".into(), &Vec::<String>::new()),
-    ])
-    .unwrap();
-
-    if Path::new(&file.to_string()).exists() {
-        voc = CsvReadOptions::default()
-            .with_has_header(true)
-            .try_into_reader_with_file_path(Some(file.clone().into()))
-            .unwrap()
-            .finish()
-            .unwrap();
-        println!("Found current voc : len {}", voc.shape().0);
-        println!("{}", voc.head(Some(10)));
-    }
+    let mut voc = load_data(&file);
 
     loop {
         println!("Enter action (add, ask / (word, des), quit):");
@@ -147,9 +155,10 @@ fn main() {
 #[cfg(test)]
 mod test {
 
-    #[test]
-    fn test_add_description() {}
+    use crate::*;
 
     #[test]
-    fn test_initialise_df() {}
+    fn test_open_csv() {
+        assert!(open_csv(&"vocab.csv".to_string()).is_ok());
+    }
 }
