@@ -15,4 +15,11 @@ Automatisation scripts for miscellanous tasks and local or remote workflow.
 ### For local workflow :
  - todo
  - claude_cli
+ - vocab
+
+TODO :
+- [] add Terminal User Interface (TUI) to *todo*
+- [] add TUI to *vocab*
+- [] connect *claude_cli* to vocab
+
 
