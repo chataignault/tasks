@@ -1,13 +1,28 @@
 use polars::prelude::*;
-// use polars_core::prelude::*;
 use polars_io::csv::read::CsvReadOptions;
-// use polars_io::csv::write::CsvWriterOptions;
-// use polars_io::prelude::*;
 use rand::rng;
 use rand::seq::SliceRandom;
 use std::fs::File;
 use std::io;
 use std::path::Path;
+// use crossterm::event::{self, Event, KeyEventKind, KeyCode, KeyEvent, KeyModifiers};
+use color_eyre::Result;
+use ratatui::{
+    crossterm::event::{self, Event, KeyCode, KeyEventKind},
+    layout::{Constraint, Layout, Position},
+    style::{Color, Modifier, Style, Stylize},
+    text::{Line, Span, Text},
+    widgets::{Block, List, ListItem, Paragraph},
+    DefaultTerminal, Frame,
+};
+
+// fn main() -> Result<()> {
+//     color_eyre::install()?;
+//     let terminal = ratatui::init();
+//     let app_result = App::new().run(terminal);
+//     ratatui::restore();
+//     app_result
+// }
 
 fn load_data(file: &String) -> DataFrame {
     let mut voc = DataFrame::new(vec![
@@ -32,6 +47,11 @@ fn open_csv(file: &String) -> Result<DataFrame, PolarsError> {
         .finish()
 }
 
+fn draw(frame: &mut Frame) {
+    let text = Text::raw("Enter action : A (add), Q (ask) / W (word) D (des), X (quit):");
+    frame.render_widget(text, frame.area());
+}
+
 fn main() {
     // CLI user interface to :
     // add new def to dictionary
@@ -41,8 +61,16 @@ fn main() {
 
     let mut voc = load_data(&file);
 
+    let mut terminal = ratatui::init();
+
     loop {
-        println!("Enter action (add, ask / (word, des), quit):");
+        terminal.draw(draw).expect("failed to draw frame");
+
+        if matches!(event::read().expect("failed to read event"), Event::Key(key) if
+            key.code == KeyCode::Char('q')
+        ) {
+            break;
+        }
 
         let mut input = String::new();
         io::stdin().read_line(&mut input).unwrap();
@@ -150,6 +178,7 @@ fn main() {
             _ => println!("Unknown command. Please try again."),
         }
     }
+    ratatui::restore();
 }
 
 #[cfg(test)]
