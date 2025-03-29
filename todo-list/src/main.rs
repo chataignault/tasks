@@ -281,7 +281,7 @@ impl From<&TodoItem> for ListItem<'_> {
                 Line::styled(format!(" ✓ {}", value.todo), COMPLETED_TEXT_FG_COLOR)
             }
             Status::InProgress => {
-                Line::styled(format!("... {}", value.todo), IN_PROGRESS_TEXT_FG_COLOR)
+                Line::styled(format!(" ✍ {}", value.todo), IN_PROGRESS_TEXT_FG_COLOR)
             }
         };
         ListItem::new(line)
