@@ -11,7 +11,7 @@ use ratatui::{
     crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind},
     layout::{Constraint, Layout, Rect},
     style::{
-        palette::tailwind::{BLUE, GREEN, SLATE, ORANGE},
+        palette::tailwind::{BLUE, GREEN, ORANGE, SLATE},
         Color, Modifier, Style, Stylize,
     },
     symbols,
@@ -22,6 +22,7 @@ use ratatui::{
     },
     DefaultTerminal,
 };
+mod utils;
 
 const TODO_HEADER_STYLE: Style = Style::new().fg(SLATE.c100).bg(BLUE.c800);
 const NORMAL_ROW_BG: Color = SLATE.c950;
@@ -71,6 +72,7 @@ enum Status {
 
 impl Default for App {
     fn default() -> Self {
+        let todos = utils::load_from_file();
         Self {
             should_exit: false,
             todo_list: TodoList::from_iter([
@@ -161,7 +163,7 @@ impl App {
             self.todo_list.items[i].status = match self.todo_list.items[i].status {
                 Status::Completed => Status::Todo,
                 Status::Todo => Status::InProgress,
-                Status::InProgress => Status::Completed
+                Status::InProgress => Status::Completed,
             }
         }
     }
@@ -277,8 +279,10 @@ impl From<&TodoItem> for ListItem<'_> {
             Status::Todo => Line::styled(format!(" ☐ {}", value.todo), TEXT_FG_COLOR),
             Status::Completed => {
                 Line::styled(format!(" ✓ {}", value.todo), COMPLETED_TEXT_FG_COLOR)
-            },
-            Status::InProgress => Line::styled(format!("... {}", value.todo), IN_PROGRESS_TEXT_FG_COLOR)
+            }
+            Status::InProgress => {
+                Line::styled(format!("... {}", value.todo), IN_PROGRESS_TEXT_FG_COLOR)
+            }
         };
         ListItem::new(line)
     }

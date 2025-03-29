@@ -1,14 +1,11 @@
 [package]
 name = "todo-list"
 publish = false
-license.workspace = true
-edition.workspace = true
-rust-version.workspace = true
+version = "0.1.0"
+edition = "2021"
+
 
 [dependencies]
-color-eyre.workspace = true
-crossterm.workspace = true
-ratatui.workspace = true
-
-[lints]
-workspace = true
+color-eyre = "0.6.3"
+crossterm = "0.28.1"
+ratatui = "0.29.0"
