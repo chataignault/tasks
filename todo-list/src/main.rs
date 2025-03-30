@@ -23,11 +23,10 @@ use ratatui::{
     DefaultTerminal,
 };
 
-
 mod base;
 mod utils;
 
-use base::{TodoItem, Status};
+use base::{Status, TodoItem};
 
 const TODO_HEADER_STYLE: Style = Style::new().fg(SLATE.c100).bg(BLUE.c800);
 const NORMAL_ROW_BG: Color = SLATE.c950;
@@ -100,7 +99,6 @@ impl FromIterator<(Status, &'static str, &'static str)> for TodoList {
     }
 }
 
-
 impl App {
     fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {
         while !self.should_exit {
@@ -109,6 +107,7 @@ impl App {
                 self.handle_key(key);
             };
         }
+        // save the json with updated status
         Ok(())
     }
 
@@ -170,20 +169,25 @@ impl Widget for &mut App {
         ])
         .areas(area);
 
-        let [list_area, item_area] =
-            Layout::vertical([Constraint::Fill(1), Constraint::Fill(1)]).areas(main_area);
+        let [list_area, item_area, history_area] = Layout::vertical([
+            Constraint::Fill(2),
+            Constraint::Fill(1),
+            Constraint::Fill(1),
+        ])
+        .areas(main_area);
 
         App::render_header(header_area, buf);
         App::render_footer(footer_area, buf);
         self.render_list(list_area, buf);
         self.render_selected_item(item_area, buf);
+        self.render_history(history_area, buf);
     }
 }
 
 /// Rendering logic for the app
 impl App {
     fn render_header(area: Rect, buf: &mut Buffer) {
-        Paragraph::new("Ratatui Todo List Example")
+        Paragraph::new("Todo List")
             .bold()
             .centered()
             .render(area, buf);
@@ -232,7 +236,7 @@ impl App {
         let info = if let Some(i) = self.todo_list.state.selected() {
             match self.todo_list.items[i].status {
                 Status::Completed => format!("✓ DONE: {}", self.todo_list.items[i].info),
-                Status::InProgress => format!("... IN PROGRESS : {}", self.todo_list.items[i].info),
+                Status::InProgress => format!("✍ IN PROGRESS : {}", self.todo_list.items[i].info),
                 Status::Todo => format!("☐ TODO: {}", self.todo_list.items[i].info),
             }
         } else {
@@ -250,6 +254,34 @@ impl App {
 
         // We can now render the item info
         Paragraph::new(info)
+            .block(block)
+            .fg(TEXT_FG_COLOR)
+            .wrap(Wrap { trim: false })
+            .render(area, buf);
+    }
+
+    fn render_history(&self, area: Rect, buf: &mut Buffer) {
+        // let info = if let Some(i) = self.todo_list.state.selected() {
+        //     match self.todo_list.items[i].status {
+        //         Status::Completed => format!("✓ DONE: {}", self.todo_list.items[i].info),
+        //         Status::InProgress => format!("✍ IN PROGRESS : {}", self.todo_list.items[i].info),
+        //         Status::Todo => format!("☐ TODO: {}", self.todo_list.items[i].info),
+        //     }
+        // } else {
+        //     "Nothing selected...".to_string()
+        // };
+
+        // We show the list item's info under the list in this paragraph
+        let block = Block::new()
+            .title(Line::raw("TODO History").centered())
+            .borders(Borders::TOP)
+            .border_set(symbols::border::EMPTY)
+            .border_style(TODO_HEADER_STYLE)
+            .bg(NORMAL_ROW_BG)
+            .padding(Padding::horizontal(1));
+
+        // We can now render the item info
+        Paragraph::new("")
             .block(block)
             .fg(TEXT_FG_COLOR)
             .wrap(Wrap { trim: false })
