@@ -22,6 +22,8 @@ use ratatui::{
     },
     DefaultTerminal,
 };
+use serde::{Deserialize, Serialize};
+use std::fs;
 mod utils;
 
 const TODO_HEADER_STYLE: Style = Style::new().fg(SLATE.c100).bg(BLUE.c800);
@@ -56,14 +58,15 @@ struct TodoList {
     state: ListState,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 struct TodoItem {
     todo: String,
     info: String,
     status: Status,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
 enum Status {
     Todo,
     InProgress,
@@ -72,8 +75,17 @@ enum Status {
 
 impl Default for App {
     fn default() -> Self {
-        let todos = utils::load_from_file();
-        Self {
+        let todos: Vec<TodoItem> = utils::load_todo_items();
+        if todos.len() > 0 {
+            Self {
+                should_exit: false,
+                todo_list: TodoList {
+                    items: todos,
+                    state: ListState::default(),
+                },
+            }
+        } else {
+            Self {
             should_exit: false,
             todo_list: TodoList::from_iter([
                 (Status::Todo, "Rewrite everything with Rust!", "I can't hold my inner voice. He tells me to rewrite the complete universe with Rust"),
@@ -84,6 +96,7 @@ impl Default for App {
                 (Status::Completed, "Refactor list example", "If you see this info that means I completed this task!"),
                 (Status::InProgress, "Use Cargo generate", "try out to start new app"),
             ]),
+        }
         }
     }
 }
