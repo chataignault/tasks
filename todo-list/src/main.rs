@@ -22,9 +22,12 @@ use ratatui::{
     },
     DefaultTerminal,
 };
-use serde::{Deserialize, Serialize};
-use std::fs;
+
+
+mod base;
 mod utils;
+
+use base::{TodoItem, Status};
 
 const TODO_HEADER_STYLE: Style = Style::new().fg(SLATE.c100).bg(BLUE.c800);
 const NORMAL_ROW_BG: Color = SLATE.c950;
@@ -33,6 +36,11 @@ const SELECTED_STYLE: Style = Style::new().bg(SLATE.c800).add_modifier(Modifier:
 const TEXT_FG_COLOR: Color = SLATE.c200;
 const COMPLETED_TEXT_FG_COLOR: Color = GREEN.c500;
 const IN_PROGRESS_TEXT_FG_COLOR: Color = ORANGE.c300;
+
+pub struct TodoList {
+    items: Vec<TodoItem>,
+    state: ListState,
+}
 
 fn main() -> Result<()> {
     color_eyre::install()?;
@@ -53,29 +61,9 @@ struct App {
     todo_list: TodoList,
 }
 
-struct TodoList {
-    items: Vec<TodoItem>,
-    state: ListState,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct TodoItem {
-    todo: String,
-    info: String,
-    status: Status,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
-#[serde(rename_all = "UPPERCASE")]
-enum Status {
-    Todo,
-    InProgress,
-    Completed,
-}
-
 impl Default for App {
     fn default() -> Self {
-        let todos: Vec<TodoItem> = utils::load_todo_items();
+        let todos: Vec<TodoItem> = utils::load_todo_items("todos/general_todo_list.json").unwrap();
         if todos.len() > 0 {
             Self {
                 should_exit: false,
@@ -112,15 +100,6 @@ impl FromIterator<(Status, &'static str, &'static str)> for TodoList {
     }
 }
 
-impl TodoItem {
-    fn new(status: Status, todo: &str, info: &str) -> Self {
-        Self {
-            status,
-            todo: todo.to_string(),
-            info: info.to_string(),
-        }
-    }
-}
 
 impl App {
     fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {

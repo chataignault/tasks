@@ -1,5 +1,6 @@
 use std::fs;
 use std::path::Path;
+use crate::base::TodoItem;
 
 const CACHE_FOLDER: &str = "todos";
 const DEFAULT_TOPIC: &str = "general";
@@ -13,8 +14,8 @@ pub fn load_todo_items(file_path: &str) -> Result<Vec<TodoItem>, Box<dyn std::er
     Ok(todo_items)
 }
 
-pub fn load_from_file() -> () {
-    let path = Path::new(&CACHE_FOLDER);
+// pub fn load_from_file() -> () {
+//     let path = Path::new(&CACHE_FOLDER);
     // let entries = match fs::read_dir(path) {
     //     Ok(entries) => entries,
     //     Err(_) => {
@@ -37,4 +38,4 @@ pub fn load_from_file() -> () {
     //     }
     // }
     // return todo_list_topic;
-}
+// }
