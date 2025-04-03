@@ -25,21 +25,25 @@ One can think of combining those three projects to :
 - firstly enable Latex equation conversions to the markdown parsing,
 - then one can ambitiously imagine a final step to have .tex extension (either from Markdown or directly using a similar approach to carry out the extraction).
 
-
+```bibtex
 @article{auer2024docling,
   title={Docling Technical Report},
   author={Auer, Christoph and Lysak, Maksym and Nassar, Ahmed and Dolfi, Michele and Livathinos, Nikolaos and Vagenas, Panos and Ramis, Cesar Berrospi and Omenetti, Matteo and Lindlbauer, Fabian and Dinkla, Kasper and others},
   journal={arXiv preprint arXiv:2408.09869},
   year={2024}
 }
+```
 
+```bibtex
 @software{Docling_Team_Docling,
 author = {{Docling Team}},
 license = {MIT},
 title = {{Docling}},
 url = {https://github.com/DS4SD/docling}
 }
+```
 
+```bibtex
 @inproceedings{mishra2025theoremview,
   title={TheoremView: A Framework for Extracting Theorem-Like Environments from Raw PDFs},
   author={Mishra, Shrey and Sharma, Neil and Gauquier, Antoine and Senellart, Pierre},
@@ -48,3 +52,4 @@ url = {https://github.com/DS4SD/docling}
   year={2025},
   organization={Springer}
 }
+```
