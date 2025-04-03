@@ -3,7 +3,7 @@ bin/diary
 bin/logs
 target
 .idea
-todo/todos
+*/todos
 
 *.txt
 */*.txt
