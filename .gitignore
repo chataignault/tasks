@@ -4,6 +4,7 @@ bin/logs
 target
 .idea
 todo/todos
+.venv
 
 *.txt
 */*.txt
@@ -12,4 +13,5 @@ todo/todos
 */*.json
 *.yaml
 *.csv
+*.lock
 
