@@ -64,9 +64,8 @@ struct App {
 
 impl Default for App {
     fn default() -> Self {
-        let todos: Vec<TodoItem> = utils::load_todo_items("todos/general_todo_list.json").unwrap();
-        let history: Vec<TodoItem> =
-            utils::load_todo_items("todos/history_todo_list.json").unwrap();
+        let todos: Vec<TodoItem> = utils::load_todo_items("general_todo_list.json").unwrap();
+        let history: Vec<TodoItem> = utils::load_todo_items("history_todo_list.json").unwrap();
         if todos.len() > 0 {
             Self {
                 should_exit: false,
