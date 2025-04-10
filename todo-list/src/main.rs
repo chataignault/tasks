@@ -118,6 +118,8 @@ impl App {
             };
         }
         // save the json with updated status
+        utils::save_list(self.todo_list.items, "general_todo_list.json");
+        utils::save_list(self.history_list.items, "history_todo_list.json");
         Ok(())
     }
 

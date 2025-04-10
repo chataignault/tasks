@@ -1,5 +1,6 @@
 use crate::base::TodoItem;
 use std::fs;
+use std::io::{BufWriter, Write};
 use std::path::Path;
 
 const CACHE_FOLDER: &str = "todos";
@@ -17,4 +18,12 @@ pub fn load_todo_items(file_name: &str) -> Result<Vec<TodoItem>, Box<dyn std::er
     let todo_items: Vec<TodoItem> = serde_json::from_str(&json_content)?;
 
     Ok(todo_items)
+}
+
+pub fn save_list(items: Vec<TodoItem>, name: &str) {
+    let path = Path::new(CACHE_FOLDER).join(Path::new(name));
+    let file = fs::File::create(path).unwrap();
+    let mut writer = BufWriter::new(file);
+    _ = serde_json::to_writer_pretty(&mut writer, &items);
+    _ = writer.flush();
 }
