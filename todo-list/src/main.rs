@@ -36,6 +36,9 @@ const TEXT_FG_COLOR: Color = SLATE.c200;
 const COMPLETED_TEXT_FG_COLOR: Color = GREEN.c500;
 const IN_PROGRESS_TEXT_FG_COLOR: Color = ORANGE.c300;
 
+const DEFAULT_TOPIC: &str = "general";
+const DEFAULT_HISTORY: &str = "history";
+
 pub struct TodoList {
     items: Vec<TodoItem>,
     state: ListState,
@@ -64,8 +67,10 @@ struct App {
 
 impl Default for App {
     fn default() -> Self {
-        let todos: Vec<TodoItem> = utils::load_todo_items("general_todo_list.json").unwrap();
-        let history: Vec<TodoItem> = utils::load_todo_items("history_todo_list.json").unwrap();
+        let todos: Vec<TodoItem> =
+            utils::load_todo_items((DEFAULT_TOPIC.to_string() + ".json").as_str()).unwrap();
+        let history: Vec<TodoItem> =
+            utils::load_todo_items((DEFAULT_HISTORY.to_string() + ".json").as_str()).unwrap();
         if todos.len() > 0 {
             Self {
                 should_exit: false,
@@ -118,8 +123,14 @@ impl App {
             };
         }
         // save the json with updated status
-        utils::save_list(self.todo_list.items, "general_todo_list.json");
-        utils::save_list(self.history_list.items, "history_todo_list.json");
+        utils::save_list(
+            self.todo_list.items,
+            (DEFAULT_TOPIC.to_string() + ".json").as_str(),
+        );
+        utils::save_list(
+            self.history_list.items,
+            (DEFAULT_HISTORY.to_string() + ".json").as_str(),
+        );
         Ok(())
     }
 
