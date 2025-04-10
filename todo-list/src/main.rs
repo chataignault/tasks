@@ -24,9 +24,11 @@ use ratatui::{
 };
 
 mod base;
+mod form;
 mod popup;
 mod utils;
 use base::{Status, TodoItem};
+use form::{Focus, TodoForm};
 
 const TODO_HEADER_STYLE: Style = Style::new().fg(SLATE.c100).bg(BLUE.c800);
 const NORMAL_ROW_BG: Color = SLATE.c950;
@@ -63,6 +65,8 @@ struct App {
     focus_history: bool,
     todo_list: TodoList,
     history_list: TodoList,
+    todo_form: TodoForm,
+    popup_mode: bool,
 }
 
 impl Default for App {
@@ -83,6 +87,8 @@ impl Default for App {
                     items: history,
                     state: ListState::default(),
                 },
+                todo_form: TodoForm::default(),
+                popup_mode: false,
             }
         } else {
             Self {
@@ -97,7 +103,9 @@ impl Default for App {
                 (Status::Completed, "Refactor list example", "If you see this info that means I completed this task!"),
                 (Status::InProgress, "Use Cargo generate", "try out to start new app"),
             ]),
-            history_list: TodoList::from_iter([])
+            history_list: TodoList::from_iter([]),
+            todo_form: TodoForm::default(),
+            popup_mode: false
         }
         }
     }
@@ -119,7 +127,15 @@ impl App {
         while !self.should_exit {
             terminal.draw(|frame| frame.render_widget(&mut self, frame.area()))?;
             if let Event::Key(key) = event::read()? {
-                self.handle_key(key);
+                if self.popup_mode {
+                    if key.code == KeyCode::Esc {
+                        self.popup_mode = !self.popup_mode;
+                    } else {
+                        self.todo_form.on_key_press(key);
+                    }
+                } else {
+                    self.handle_key(key);
+                }
             };
         }
         // save the json with updated status
@@ -150,6 +166,7 @@ impl App {
             }
             KeyCode::Char('w') => self.switch_todo_history(),
             KeyCode::Char('f') => self.flush_items(),
+            KeyCode::Char('a') => self.add_todo(),
             _ => {}
         }
     }
@@ -254,6 +271,10 @@ impl App {
         self.todo_list = other_items;
         self.history_list = done_items;
     }
+
+    fn add_todo(&mut self) {
+        self.popup_mode = !self.popup_mode;
+    }
 }
 
 impl Widget for &mut App {
@@ -279,19 +300,21 @@ impl Widget for &mut App {
         self.render_history(history_area, buf);
 
         // pop up
-        let block = Block::bordered().on_light_magenta();
-        let popup_area = popup::popup_area(area, 60, 20);
-        let vertical = Layout::vertical([Constraint::Percentage(20), Constraint::Percentage(80)]);
-        let [instructions, content] = vertical.areas(popup_area);
-        let text = "New task";
-        let paragraph = Paragraph::new(text.slow_blink())
-            .centered()
-            .wrap(Wrap { trim: true });
-        Clear.render(popup_area, buf);
-        block.render(popup_area, buf);
-
-        paragraph.render(instructions, buf);
-        // block.render(content, buf);
+        if self.popup_mode {
+            let block = Block::bordered().on_light_magenta();
+            let popup_area = popup::popup_area(area, 60, 20);
+            let vertical =
+                Layout::vertical([Constraint::Percentage(20), Constraint::Percentage(80)]);
+            let [instructions, content] = vertical.areas(popup_area);
+            let text = "New task";
+            let paragraph = Paragraph::new(text.slow_blink())
+                .centered()
+                .wrap(Wrap { trim: true });
+            Clear.render(popup_area, buf);
+            block.render(popup_area, buf);
+            paragraph.render(instructions, buf);
+            self.todo_form.render(content, buf);
+        }
     }
 }
 
