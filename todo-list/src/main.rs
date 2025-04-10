@@ -57,6 +57,7 @@ fn main() -> Result<()> {
 /// the drawing logic for items on how to specify the highlighting style for selected items.
 struct App {
     should_exit: bool,
+    focus_history: bool,
     todo_list: TodoList,
     history_list: TodoList,
 }
@@ -69,6 +70,7 @@ impl Default for App {
         if todos.len() > 0 {
             Self {
                 should_exit: false,
+                focus_history: false,
                 todo_list: TodoList {
                     items: todos,
                     state: ListState::default(),
@@ -81,6 +83,7 @@ impl Default for App {
         } else {
             Self {
             should_exit: false,
+            focus_history: false,
             todo_list: TodoList::from_iter([
                 (Status::Todo, "Rewrite everything with Rust!", "I can't hold my inner voice. He tells me to rewrite the complete universe with Rust"),
                 (Status::Completed, "Rewrite all of your tui apps with Ratatui", "Yes, you heard that right. Go and replace your tui with Ratatui."),
@@ -133,23 +136,40 @@ impl App {
             KeyCode::Char('l') | KeyCode::Right | KeyCode::Enter => {
                 self.toggle_status();
             }
+            KeyCode::Char('w') => self.switch_todo_history(),
             _ => {}
         }
     }
 
     fn select_none(&mut self) {
-        self.todo_list.state.select(None);
+        if self.focus_history {
+            self.history_list.state.select(None);
+        } else {
+            self.todo_list.state.select(None);
+        }
     }
 
     fn select_next(&mut self) {
-        self.todo_list.state.select_next();
+        if self.focus_history {
+            self.history_list.state.select_next();
+        } else {
+            self.todo_list.state.select_next();
+        }
     }
     fn select_previous(&mut self) {
-        self.todo_list.state.select_previous();
+        if self.focus_history {
+            self.history_list.state.select_previous();
+        } else {
+            self.todo_list.state.select_previous();
+        }
     }
 
     fn select_first(&mut self) {
-        self.todo_list.state.select_first();
+        if self.focus_history {
+            self.history_list.state.select_first();
+        } else {
+            self.todo_list.state.select_first();
+        }
     }
 
     fn select_last(&mut self) {
@@ -159,12 +179,24 @@ impl App {
     /// Changes the status of the selected list item
     fn toggle_status(&mut self) {
         if let Some(i) = self.todo_list.state.selected() {
-            self.todo_list.items[i].status = match self.todo_list.items[i].status {
-                Status::Completed => Status::Todo,
-                Status::Todo => Status::InProgress,
-                Status::InProgress => Status::Completed,
+            if self.focus_history {
+                self.history_list.items[i].status = match self.history_list.items[i].status {
+                    Status::Completed => Status::Todo,
+                    Status::Todo => Status::InProgress,
+                    Status::InProgress => Status::Completed,
+                }
+            } else {
+                self.todo_list.items[i].status = match self.todo_list.items[i].status {
+                    Status::Completed => Status::Todo,
+                    Status::Todo => Status::InProgress,
+                    Status::InProgress => Status::Completed,
+                }
             }
         }
+    }
+
+    fn switch_todo_history(&mut self) {
+        self.focus_history = !self.focus_history;
     }
 }
 
@@ -269,16 +301,6 @@ impl App {
     }
 
     fn render_history(&mut self, area: Rect, buf: &mut Buffer) {
-        // let info = if let Some(i) = self.history.state.selected() {
-        //     match self.todo_list.items[i].status {
-        //         Status::Completed => format!("✓ DONE: {}", self.todo_list.items[i].info),
-        //         Status::InProgress => format!("✍ IN PROGRESS : {}", self.todo_list.items[i].info),
-        //         Status::Todo => format!("☐ TODO: {}", self.todo_list.items[i].info),
-        //     }
-        // } else {
-        //     "Nothing selected...".to_string()
-        // };
-
         // We show the list item's info under the list in this paragraph
         let block = Block::new()
             .title(Line::raw("TODO History").centered())
@@ -302,20 +324,13 @@ impl App {
         // Create a List from all list items and highlight the currently selected one
         let list = List::new(items)
             .block(block)
-            // .highlight_style(SELECTED_STYLE)
-            // .highlight_symbol(">")
+            .highlight_style(SELECTED_STYLE)
+            .highlight_symbol(">")
             .highlight_spacing(HighlightSpacing::Always);
 
         // We need to disambiguate this trait method as both `Widget` and `StatefulWidget` share the
         // same method name `render`.
         StatefulWidget::render(list, area, buf, &mut self.history_list.state);
-
-        // We can now render the item info
-        // Paragraph::new("")
-        //     .block(block)
-        //     .fg(TEXT_FG_COLOR)
-        //     .wrap(Wrap { trim: false })
-        //     .render(area, buf);
     }
 }
 
