@@ -17,15 +17,15 @@ use ratatui::{
     symbols,
     text::Line,
     widgets::{
-        Block, Borders, HighlightSpacing, List, ListItem, ListState, Padding, Paragraph,
+        Block, Borders, Clear, HighlightSpacing, List, ListItem, ListState, Padding, Paragraph,
         StatefulWidget, Widget, Wrap,
     },
     DefaultTerminal,
 };
 
 mod base;
+mod popup;
 mod utils;
-
 use base::{Status, TodoItem};
 
 const TODO_HEADER_STYLE: Style = Style::new().fg(SLATE.c100).bg(BLUE.c800);
@@ -277,6 +277,21 @@ impl Widget for &mut App {
         self.render_list(list_area, buf);
         self.render_selected_item(item_area, buf);
         self.render_history(history_area, buf);
+
+        // pop up
+        let block = Block::bordered().on_light_magenta();
+        let popup_area = popup::popup_area(area, 60, 20);
+        let vertical = Layout::vertical([Constraint::Percentage(20), Constraint::Percentage(80)]);
+        let [instructions, content] = vertical.areas(popup_area);
+        let text = "New task";
+        let paragraph = Paragraph::new(text.slow_blink())
+            .centered()
+            .wrap(Wrap { trim: true });
+        Clear.render(popup_area, buf);
+        block.render(popup_area, buf);
+
+        paragraph.render(instructions, buf);
+        // block.render(content, buf);
     }
 }
 
