@@ -58,16 +58,23 @@ fn main() -> Result<()> {
 struct App {
     should_exit: bool,
     todo_list: TodoList,
+    history_list: TodoList,
 }
 
 impl Default for App {
     fn default() -> Self {
         let todos: Vec<TodoItem> = utils::load_todo_items("todos/general_todo_list.json").unwrap();
+        let history: Vec<TodoItem> =
+            utils::load_todo_items("todos/history_todo_list.json").unwrap();
         if todos.len() > 0 {
             Self {
                 should_exit: false,
                 todo_list: TodoList {
                     items: todos,
+                    state: ListState::default(),
+                },
+                history_list: TodoList {
+                    items: history,
                     state: ListState::default(),
                 },
             }
@@ -83,6 +90,7 @@ impl Default for App {
                 (Status::Completed, "Refactor list example", "If you see this info that means I completed this task!"),
                 (Status::InProgress, "Use Cargo generate", "try out to start new app"),
             ]),
+            history_list: TodoList::from_iter([])
         }
         }
     }
@@ -260,8 +268,8 @@ impl App {
             .render(area, buf);
     }
 
-    fn render_history(&self, area: Rect, buf: &mut Buffer) {
-        // let info = if let Some(i) = self.todo_list.state.selected() {
+    fn render_history(&mut self, area: Rect, buf: &mut Buffer) {
+        // let info = if let Some(i) = self.history.state.selected() {
         //     match self.todo_list.items[i].status {
         //         Status::Completed => format!("✓ DONE: {}", self.todo_list.items[i].info),
         //         Status::InProgress => format!("✍ IN PROGRESS : {}", self.todo_list.items[i].info),
@@ -280,12 +288,34 @@ impl App {
             .bg(NORMAL_ROW_BG)
             .padding(Padding::horizontal(1));
 
-        // We can now render the item info
-        Paragraph::new("")
+        let items: Vec<ListItem> = self
+            .history_list
+            .items
+            .iter()
+            .enumerate()
+            .map(|(i, todo_item)| {
+                let color = alternate_colors(i);
+                ListItem::from(todo_item).bg(color)
+            })
+            .collect();
+
+        // Create a List from all list items and highlight the currently selected one
+        let list = List::new(items)
             .block(block)
-            .fg(TEXT_FG_COLOR)
-            .wrap(Wrap { trim: false })
-            .render(area, buf);
+            // .highlight_style(SELECTED_STYLE)
+            // .highlight_symbol(">")
+            .highlight_spacing(HighlightSpacing::Always);
+
+        // We need to disambiguate this trait method as both `Widget` and `StatefulWidget` share the
+        // same method name `render`.
+        StatefulWidget::render(list, area, buf, &mut self.history_list.state);
+
+        // We can now render the item info
+        // Paragraph::new("")
+        //     .block(block)
+        //     .fg(TEXT_FG_COLOR)
+        //     .wrap(Wrap { trim: false })
+        //     .render(area, buf);
     }
 }
 
