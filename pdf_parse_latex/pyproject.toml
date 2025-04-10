@@ -1,0 +1,10 @@
+[project]
+name = "pdf-parse-latex"
+version = "0.1.0"
+description = "Leverage pdf extraction tools to complete markdown with latex equations"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "docling>=2.28.4",
+]
+
