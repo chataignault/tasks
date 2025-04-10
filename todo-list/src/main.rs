@@ -137,6 +137,7 @@ impl App {
                 self.toggle_status();
             }
             KeyCode::Char('w') => self.switch_todo_history(),
+            KeyCode::Char('f') => self.flush_items(),
             _ => {}
         }
     }
@@ -199,6 +200,29 @@ impl App {
 
     fn switch_todo_history(&mut self) {
         self.focus_history = !self.focus_history;
+    }
+
+    fn flush_items(&mut self) {
+        let done_items = TodoList {
+            items: self
+                .history_list
+                .items
+                .iter()
+                .map(|item: &TodoItem| item.clone())
+                .collect(),
+            state: self.history_list.state.clone(),
+        };
+        let other_items = TodoList {
+            items: self
+                .todo_list
+                .items
+                .iter()
+                .map(|item: &TodoItem| item.clone())
+                .collect(),
+            state: self.todo_list.state.clone(),
+        };
+        self.todo_list = other_items;
+        self.history_list = done_items;
     }
 }
 
