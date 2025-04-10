@@ -9,6 +9,8 @@ use ratatui::{
 };
 use serde::Serialize;
 
+use crate::base::{Status, TodoItem};
+
 #[derive(Serialize)]
 pub struct TodoForm {
     #[serde(skip)]
@@ -51,13 +53,17 @@ impl TodoForm {
 
         self.name.render(name_area, buf);
         self.description.render(description_area, buf);
-        // let cursor_position = match self.focus {
-        //     Focus::Name => name_area.offset(self.name.cursor_offset()),
-        //     Focus::Description => description_area.offset(self.description.cursor_offset()),
-        // };
-        // frame.set_cursor_position(cursor_position);
-        // frame.render_widget(&self.name, first_name_area);
-        // frame.render_widget(&self.description, last_name_area);
+    }
+
+    pub fn extract(&mut self) -> TodoItem {
+        let todo = TodoItem {
+            todo: self.name.value.to_string(),
+            info: self.description.value.to_string(),
+            status: Status::Todo,
+        };
+        self.name.value = "".to_string();
+        self.description.value = "".to_string();
+        todo
     }
 }
 
