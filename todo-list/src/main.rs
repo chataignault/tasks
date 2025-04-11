@@ -168,6 +168,7 @@ impl App {
             KeyCode::Char('w') => self.switch_todo_history(),
             KeyCode::Char('f') => self.flush_items(),
             KeyCode::Char('a') => self.add_todo(),
+            KeyCode::Char('d') => self.delete_task(),
             _ => {}
         }
     }
@@ -275,6 +276,32 @@ impl App {
 
     fn add_todo(&mut self) {
         self.popup_mode = !self.popup_mode;
+    }
+
+    fn delete_task(&mut self) {
+        if self.focus_history {
+            if let Some(i) = self.history_list.state.selected() {
+                self.history_list.items = self
+                    .history_list
+                    .items
+                    .iter()
+                    .enumerate()
+                    .filter(|&(j, _)| j != i)
+                    .map(|(_, todo)| todo.clone())
+                    .collect();
+            }
+        } else {
+            if let Some(i) = self.todo_list.state.selected() {
+                self.todo_list.items = self
+                    .todo_list
+                    .items
+                    .iter()
+                    .enumerate()
+                    .filter(|&(j, _)| j != i)
+                    .map(|(_, todo)| todo.clone())
+                    .collect();
+            }
+        }
     }
 }
 
