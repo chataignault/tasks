@@ -28,7 +28,7 @@ mod form;
 mod popup;
 mod utils;
 use base::{Status, TodoItem};
-use form::{Focus, TodoForm};
+use form::TodoForm;
 
 const TODO_HEADER_STYLE: Style = Style::new().fg(SLATE.c100).bg(BLUE.c800);
 const NORMAL_ROW_BG: Color = SLATE.c950;

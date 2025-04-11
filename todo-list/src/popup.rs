@@ -1,10 +1,4 @@
-use ratatui::{
-    crossterm::event::{self, Event, KeyCode, KeyEventKind},
-    layout::{Constraint, Flex, Layout, Rect},
-    style::Stylize,
-    widgets::{Block, Clear, Paragraph, Wrap},
-    DefaultTerminal, Frame,
-};
+use ratatui::layout::{Constraint, Flex, Layout, Rect};
 
 pub fn popup_area(area: Rect, percent_x: u16, percent_y: u16) -> Rect {
     let vertical = Layout::vertical([Constraint::Percentage(percent_y)]).flex(Flex::Center);

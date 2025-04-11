@@ -1,11 +1,10 @@
-use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
+use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
     buffer::Buffer,
-    layout::{Constraint, Layout, Offset, Rect},
+    layout::{Constraint, Layout, Rect},
     style::Stylize,
     text::Line,
     widgets::Widget,
-    Frame,
 };
 use serde::Serialize;
 
@@ -109,11 +108,6 @@ impl StringField {
             }
             _ => {}
         }
-    }
-
-    fn cursor_offset(&self) -> Offset {
-        let x = (self.label.len() + self.value.len() + 2) as i32;
-        Offset { x: x, y: 0 }
     }
 }
 
