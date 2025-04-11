@@ -1,5 +1,5 @@
 [package]
-name = "todo-list"
+name = "todo"
 publish = false
 version = "0.1.0"
 edition = "2021"
