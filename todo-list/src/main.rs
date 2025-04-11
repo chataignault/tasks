@@ -329,19 +329,7 @@ impl Widget for &mut App {
 
         // pop up
         if self.popup_mode {
-            let block = Block::bordered().on_light_magenta();
-            let popup_area = popup::popup_area(area, 60, 20);
-            let vertical =
-                Layout::vertical([Constraint::Percentage(20), Constraint::Percentage(80)]);
-            let [instructions, content] = vertical.areas(popup_area);
-            let text = "New task";
-            let paragraph = Paragraph::new(text.slow_blink())
-                .centered()
-                .wrap(Wrap { trim: true });
-            Clear.render(popup_area, buf);
-            block.render(popup_area, buf);
-            paragraph.render(instructions, buf);
-            self.todo_form.render(content, buf);
+            self.render_popup(area, buf);
         }
     }
 }
@@ -453,6 +441,21 @@ impl App {
         // We need to disambiguate this trait method as both `Widget` and `StatefulWidget` share the
         // same method name `render`.
         StatefulWidget::render(list, area, buf, &mut self.history_list.state);
+    }
+
+    fn render_popup(&mut self, area: Rect, buf: &mut Buffer) {
+        let block = Block::bordered().style(TODO_HEADER_STYLE);
+        let popup_area = popup::popup_area(area, 60, 20);
+        let vertical = Layout::vertical([Constraint::Percentage(20), Constraint::Percentage(80)]);
+        let [instructions, content] = vertical.areas(popup_area);
+        let text = "New task";
+        let paragraph = Paragraph::new(text.slow_blink())
+            .centered()
+            .wrap(Wrap { trim: true });
+        Clear.render(popup_area, buf);
+        block.render(popup_area, buf);
+        paragraph.render(instructions, buf);
+        self.todo_form.render(content, buf);
     }
 }
 
