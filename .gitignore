@@ -6,6 +6,7 @@ target
 */todos
 todo/todos
 .venv
+.todos
 
 *.txt
 */*.txt

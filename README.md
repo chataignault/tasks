@@ -18,8 +18,8 @@ Automatisation scripts for miscellanous tasks and local or remote workflow.
  - vocab
 
 TODO :
-- [ ] add Terminal User Interface (TUI) to *todo*
+- [x] add Terminal User Interface (TUI) to *todo* with [this crate](https://ratatui.rs/)
 - [ ] add TUI to *vocab*
 - [ ] connect *claude_cli* to vocab
 - [ ] *tree* CLI to browse nested article folders
-
+- [ ] add script to gather binaries
