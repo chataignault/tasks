@@ -124,11 +124,13 @@ impl App {
             terminal.draw(|frame| frame.render_widget(&mut self, frame.area()))?;
             if let Event::Key(key) = event::read()? {
                 if self.popup_mode {
-                    if key.code == KeyCode::Esc {
+                    if (key.code == KeyCode::Esc) | (key.code == KeyCode::Enter) {
                         self.popup_mode = !self.popup_mode;
                         // get the form values and add it to the todo list
                         let todo = self.todo_form.extract();
-                        self.todo_list.items.push(todo);
+                        if key.code == KeyCode::Enter {
+                            self.todo_list.items.push(todo);
+                        }
                     } else {
                         self.todo_form.on_key_press(key);
                     }
