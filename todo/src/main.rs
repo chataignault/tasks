@@ -169,6 +169,7 @@ impl App {
             KeyCode::Char('f') => self.flush_items(),
             KeyCode::Char('a') => self.add_todo(),
             KeyCode::Char('d') => self.delete_task(),
+            KeyCode::Char('s') => self.sort_list(),
             _ => {}
         }
     }
@@ -303,6 +304,11 @@ impl App {
             }
         }
     }
+
+    fn sort_list(&mut self) {
+        // sort the main list by ascending name
+        self.todo_list.items.sort_by(|a, b| a.todo.cmp(&b.todo));
+    }
 }
 
 impl Widget for &mut App {
@@ -337,21 +343,18 @@ impl Widget for &mut App {
 /// Rendering logic for the app
 impl App {
     fn render_header(area: Rect, buf: &mut Buffer) {
-        Paragraph::new("Todo List")
-            .bold()
-            .centered()
-            .render(area, buf);
+        Paragraph::new("TODO").bold().centered().render(area, buf);
     }
 
     fn render_footer(area: Rect, buf: &mut Buffer) {
-        Paragraph::new("Use ↓↑ to move, ← to unselect, → to change status, g/G to go top/bottom.")
+        Paragraph::new("Use ↓↑ to move, ← to unselect, → to change status, g/G to go top/bottom, a to add a task, f to flush, d to delete.")
             .centered()
             .render(area, buf);
     }
 
     fn render_list(&mut self, area: Rect, buf: &mut Buffer) {
         let block = Block::new()
-            .title(Line::raw("TODO List").centered())
+            .title(Line::raw("List").centered())
             .borders(Borders::TOP)
             .border_set(symbols::border::EMPTY)
             .border_style(TODO_HEADER_STYLE)
@@ -395,7 +398,7 @@ impl App {
 
         // We show the list item's info under the list in this paragraph
         let block = Block::new()
-            .title(Line::raw("TODO Info").centered())
+            .title(Line::raw("Description").centered())
             .borders(Borders::TOP)
             .border_set(symbols::border::EMPTY)
             .border_style(TODO_HEADER_STYLE)
@@ -413,7 +416,7 @@ impl App {
     fn render_history(&mut self, area: Rect, buf: &mut Buffer) {
         // We show the list item's info under the list in this paragraph
         let block = Block::new()
-            .title(Line::raw("TODO History").centered())
+            .title(Line::raw("History").centered())
             .borders(Borders::TOP)
             .border_set(symbols::border::EMPTY)
             .border_style(TODO_HEADER_STYLE)
