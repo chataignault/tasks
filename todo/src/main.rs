@@ -169,6 +169,7 @@ impl App {
             KeyCode::Char('f') => self.flush_items(),
             KeyCode::Char('a') => self.add_todo(),
             KeyCode::Char('d') => self.delete_task(),
+            KeyCode::Char('s') => self.sort_list(),
             _ => {}
         }
     }
@@ -302,6 +303,11 @@ impl App {
                     .collect();
             }
         }
+    }
+
+    fn sort_list(&mut self) {
+        // sort the main list by ascending name
+        self.todo_list.items.sort_by(|a, b| a.todo.cmp(&b.todo));
     }
 }
 
