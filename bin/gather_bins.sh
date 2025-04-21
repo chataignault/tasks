@@ -21,6 +21,8 @@ ls $SCRIPT_DIR/../ | grep -E "*/$" | grep -v "^\." | xargs -I {} printf "\nFound
 
 printf "\n"
 
+cd $SCRIPT_DIR
+
 # if there is a cargo file
 for project_dir in $(ls $SCRIPT_DIR/../ | grep -E "*/$" | grep -v "^\." );
 do
