@@ -36,6 +36,7 @@ do
     # move target .exe to bin folder
     cp "./target/release/${project_dir::-1}.exe" ../bin/
     echo -e "Successfully added ${ORANGE} $project_dir ${NC} bin."
+    cargo clean
     fi
 done
 
