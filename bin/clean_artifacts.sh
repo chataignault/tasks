@@ -2,6 +2,7 @@
 
 remove_venv() {
 	echo "Removing Python virtual environment..."
+	find $1 -name .venv | xargs -I {} bash -c 'echo "Found {}" && rm -rf {}'
 	find $1 -name venv | xargs -I {} bash -c 'echo "Found {}" && rm -rf {}'
 	echo
 }
