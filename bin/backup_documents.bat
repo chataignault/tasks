@@ -58,7 +58,6 @@ for /f "usebackq tokens=1,2,3* delims=," %%A in ("%CONFIG_FILE%") do (
     set "dest=%%B"
     set "options=%%C"
     
-    :: Skip empty lines and comments
     if not "!source!" == "" if not "!source:~0,1!" == "#" (
         set /a job_count+=1
         call :ExecuteJob
@@ -140,6 +139,8 @@ echo #   /W:n = Wait time between retries
 echo #   /MT:n = Multi-threaded copies
 echo #   /XD = Exclude directories
 echo #   /XF = Exclude files
+echo #
+echo # https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy
 echo.
 echo C:\Users\%%USERNAME%%\Documents,D:\Backup\Documents,/E /R:3 /W:10 /MT:8
 echo C:\Users\%%USERNAME%%\Pictures,D:\Backup\Pictures,/E /R:3 /W:10 /MT:8
