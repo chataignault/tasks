@@ -142,9 +142,8 @@ echo #   /XF = Exclude files
 echo #
 echo # https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy
 echo.
-echo C:\Users\%%USERNAME%%\Documents,D:\Backup\Documents,/E /R:3 /W:10 /MT:8
-echo C:\Users\%%USERNAME%%\Pictures,D:\Backup\Pictures,/E /R:3 /W:10 /MT:8
-echo C:\Projects,\\NetworkDrive\Backup\Projects,/MIR /R:5 /W:15
+echo C:\Users\%%USERNAME%%\Documents,B:\Documents,/E /R:3 /W:10 /MT:8 /PURGE
+echo C:\Users\%%USERNAME%%\Pictures,B:\Pictures,/E /R:3 /W:10 /MT:8
 ) > "%CONFIG_FILE%"
 
 exit /b 0
