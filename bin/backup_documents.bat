@@ -9,8 +9,8 @@ echo Starting Robocopy Operations...
 echo.
 
 :: Configuration
-set "CONFIG_FILE=config/backup_documents_config.txt"
-set "LOGFILE=logs/backup_documents_log.txt"
+set "CONFIG_FILE=C:\code\tasks\bin\config\backup_documents_config.txt"
+set "LOGFILE=C:\code\tasks\bin\logs\backup_documents_log.txt"
 
 :: Check if config file exists
 if not exist "%CONFIG_FILE%" (
