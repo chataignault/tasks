@@ -41,3 +41,6 @@ find "$sourcePath" -type f -name '*.tex' | \
 shopt -u nocasematch
 shopt -u nocaseglob
 
+# fuse pdf notes into one large
+rm $cimp/all_notes.pdf && pdfunite $cimp/all_notes/* $cimp/all_notes.pdf
+
