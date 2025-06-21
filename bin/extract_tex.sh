@@ -3,7 +3,7 @@
 # Copy lecture notes source files from Imperial folder immediately to repository
 
 sourcePath="$cimp"
-destinationPath="/c/code/latex/cimp"
+destinationPath="/c/code/latex"
 
 
 if [ ! -d "$sourcePath" ]; then
@@ -32,6 +32,7 @@ copy_file() {
 
 export -f copy_file
 
+# copy notes from folders within the main lectures folder
 find "$sourcePath" -type f \( \
 	-name '*.tex' \
 	-o -path '*/notes/*.png' \
@@ -41,6 +42,9 @@ find "$sourcePath" -type f \( \
 	-o -path '*/Mastery*/*.tex' \
 	-o -path '*/Mastery*/*.png' \
 	-o -path '*/Mastery*/*.jpg' \
-	\) | xargs -P 10 -I {} bash -c 'copy_file "$@"' _ {} $sourcePath $destinationPath
+	\) | xargs -P 10 -I {} bash -c 'copy_file "$@"' _ {} $sourcePath "$destinationPath/cimp"
 
+
+# also add txt notes from the desktop
+robocopy ~/Desktop "$destinationPath/desktop" //MIR //XF *.ini //R:10 //W:2 //V > /dev/null
 
