@@ -40,7 +40,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Prepare the request body
     let body = serde_json::json!({
-        "model": "claude-3-5-sonnet-20240620",
+        "model": "claude-4-sonnet-20250514",
         "max_tokens": 1000,
         "messages": [
             {
