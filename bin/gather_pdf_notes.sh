@@ -41,6 +41,15 @@ find "$sourcePath" -type f -name '*.tex' | \
 shopt -u nocasematch
 shopt -u nocaseglob
 
-# fuse pdf notes into one large
-rm $cimp/all_notes.pdf && pdfunite $cimp/all_notes/* $cimp/all_notes.pdf
+# fuse pdf notes into one large file and courseworks into another
+shopt -s extglob
+rm $cimp/all_notes.pdf && pdfunite $cimp/all_notes/!(*Coursework*) $cimp/all_notes.pdf
+if [ -e $cimp/courseworks.pdf ] 
+then 
+	rm $cimp/courseworks.pdf 
+else 
+	echo "Courseworks pdf not found"
+fi 
+pdfunite $cimp/all_notes/*Coursework* $cimp/courseworks.pdf
+shopt -u extglob
 
