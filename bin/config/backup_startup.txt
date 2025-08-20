@@ -1,0 +1,22 @@
+# Robocopy Configuration File
+# Format: source,destination,options
+# One job per line, comma separated
+# Lines starting with # are comments
+#
+# Available robocopy options:
+#   /E = Copy subdirectories including empty ones
+#   /MIR = Mirror directory tree
+#   /R:n = Number of retries
+#   /W:n = Wait time between retries  
+#   /MT:n = Multi-threaded copies
+#   /XD = Exclude directories
+#   /XF = Exclude files
+
+# Lectures, Articles :
+B:\Cours,C:\Users\%USERNAME%\Cours,/E /MIR /XD venv .venv data .cache* .pycache*
+
+# Admin
+B:\work_experiences,C:\Users\%USERNAME%\work_experiences,/MIR /R:3 /W:5
+B:\desktop,C:\Users\%USERNAME%\Desktop,/MIR /XF *.ini /MIR /R:3 /W:5
+B:\actes,C:\Users\%USERNAME%\actes,/E /R:3 /W:5 /MIR
+
