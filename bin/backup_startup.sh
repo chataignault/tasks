@@ -10,8 +10,8 @@ if [[ ! -d $BACKUP_FOLDER ]] ; then
 	return
 fi
 
-if [[ ! -d "~/cours" ]] ; then
-	mkdir "/home/leonc/cours"
+if [[ ! -d "$LECTURES_DEST" ]] ; then
+	mkdir "$LECTURES_DEST"
 fi
 
 # mirror synchronisation

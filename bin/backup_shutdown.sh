@@ -10,10 +10,11 @@ if [[ ! -d $BACKUP_FOLDER ]] ; then
 	return
 fi
 
-if [[ ! -d "~/cours" ]] ; then
-	mkdir "/home/leonc/cours"
+if [[ ! -d "$LECTURES_DEST" ]] ; then
+	echo "Source folder does not exist."
+	return 
 fi
 
 # mirror synchronisation
-rsync -a $LECTURES_DEST "$BACKUP_FOLDER/Cours/"
+rsync -a --exclude '__pycache__' --exclude '.venv' --exclude '*.parquet' "$LECTURES_DEST/" "$BACKUP_FOLDER/Cours/"
 
