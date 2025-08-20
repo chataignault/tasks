@@ -15,5 +15,9 @@ if [[ ! -d "$LECTURES_DEST" ]] ; then
 fi
 
 # mirror synchronisation
-rsync -av --delete "$BACKUP_FOLDER/Cours/" $LECTURES_DEST
+rsync -a --delete --perms "$BACKUP_FOLDER/Cours/" $LECTURES_DEST
+
+# reset permissions
+find "$LECTURES_DEST" -type f -exec chmod 644 {} \;
+find "$LECTURES_DEST" -type d -exec chmod 755 {} \;
 
