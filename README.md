@@ -19,10 +19,27 @@ Automatisation scripts for miscellanous tasks and local or remote workflow.
  - backup_documents
  - gather_bins : *compiles local projects to binaries*
 
+## Details
+
+### Backup documents
+> Synchronize data from dual boot partitions, from a "backup" ntfs partition.
+
+Flowchart :
+
+<img src="img/backup_flowchart.png" alt="drawing" width="500px"/>
+
+The "backup" partition is expected to be the newest version at each session start.
+The Ubuntu session can only make additions to reduce the risk of conflict.
+
+Regarding Windows task scheduler tricks to run at shutdown :
+- https://superuser.com/questions/165142/using-task-scheduler-to-run-a-task-before-shutdown
+- https://www.elevenforum.com/t/is-it-possible-to-run-a-task-at-shutdown-and-how.17300/
+
+*** 
+
 TODO :
 - [x] add Terminal User Interface (TUI) to *todo* with [this crate](https://ratatui.rs/)
 - [ ] add TUI to *vocab*
 - [ ] connect *claude_cli* to vocab
-- [ ] *tree* CLI to browse nested article folders
+- [x] *tree* CLI to browse nested article folders -> from cargo bin https://crates.io/crates/tree-rs
 - [x] add script to gather binaries
-
