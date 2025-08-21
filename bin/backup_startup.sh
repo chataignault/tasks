@@ -21,3 +21,5 @@ rsync -a --delete --perms "$BACKUP_FOLDER/Cours/" $LECTURES_DEST
 find "$LECTURES_DEST" -type f -exec chmod 644 {} \;
 find "$LECTURES_DEST" -type d -exec chmod 755 {} \;
 
+chown --recursive leonc $LECTURES_DEST
+
