@@ -43,3 +43,8 @@ TODO :
 - [ ] connect *claude_cli* to vocab
 - [x] *tree* CLI to browse nested article folders -> from cargo bin https://crates.io/crates/tree-rs
 - [x] add script to gather binaries
+
+Other refs :
+- https://github.com/automazeio/ccpm/tree/main
+- https://www.atlassian.com/agile/project-management/epics
+
