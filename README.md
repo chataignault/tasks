@@ -35,6 +35,13 @@ Regarding Windows task scheduler tricks to run at shutdown :
 - https://superuser.com/questions/165142/using-task-scheduler-to-run-a-task-before-shutdown
 - https://www.elevenforum.com/t/is-it-possible-to-run-a-task-at-shutdown-and-how.17300/
 
+Scripts location :
+- Ubuntu : `/bin/unix/backup/*.sh`
+- Windows : `/bin/windows/backup_documents.bat`
+
+Helper reference for `systemctl` integration in Unix :
+- https://gist.github.com/chataignault/08fce29821b5b74bd5d191c57f5958c9
+
 *** 
 
 TODO :
