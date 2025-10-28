@@ -1,5 +1,6 @@
 bin/diary
 bin/logs
+bin/unix/todo
 target
 .idea
 */todos
